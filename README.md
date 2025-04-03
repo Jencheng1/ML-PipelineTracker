@@ -1,48 +1,108 @@
-# DVC vs MLflow Demo Project
+# ML-TrackHub: Data & Model Version Control
 
 This project demonstrates the key differences between DVC (Data Version Control) and MLflow, focusing on their distinct approaches to tracking data and models in machine learning projects.
 
 ## Overview
 
+### DVC (Data Version Control) Architecture
 ```mermaid
 graph TD
-    A[ML Project] --> B[DVC: Data Version Control]
-    A --> C[MLflow: Model Tracking]
+    A[DVC Pipeline] --> B[Data Versioning]
+    A --> C[Pipeline Management]
+    A --> D[Data Storage]
     
-    B --> D[Data Versioning]
-    B --> E[Data Pipeline]
-    B --> F[Data Storage]
+    B --> B1[Git Metadata]
+    B --> B2[Data Lineage]
+    B --> B3[Data Dependencies]
     
-    D --> D1[Git Metadata]
-    D --> D2[Data Lineage]
-    D --> D3[Data Dependencies]
+    C --> C1[Pipeline Stages]
+    C --> C2[Reproducibility]
+    C --> C3[Dependencies Graph]
     
-    E --> E1[Pipeline Stages]
-    E --> E2[Reproducibility]
-    E --> E3[Dependencies Graph]
+    D --> D1[Remote Storage]
+    D --> D2[Data Caching]
+    D --> D3[Data Access Control]
     
-    F --> F1[Remote Storage]
-    F --> F2[Data Caching]
-    F --> F3[Data Access Control]
-    
-    C --> G[Model Registry]
-    C --> H[Experiment Tracking]
-    C --> I[Model Deployment]
-    
-    G --> G1[Model Versioning]
-    G --> G2[Model Metadata]
-    G --> G3[Model Stage Management]
-    
-    H --> H1[Parameter Tracking]
-    H --> H2[Metric Logging]
-    H --> H3[Artifact Storage]
-    
-    I --> I1[Model Serving]
-    I --> I2[Deployment Config]
-    I --> I3[Model Monitoring]
-    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
     style B fill:#f9f,stroke:#333,stroke-width:2px
+    style C fill:#f9f,stroke:#333,stroke-width:2px
+    style D fill:#f9f,stroke:#333,stroke-width:2px
+```
+
+### MLflow Architecture
+```mermaid
+graph TD
+    A[MLflow] --> B[Experiment Tracking]
+    A --> C[Model Registry]
+    A --> D[Model Deployment]
+    
+    B --> B1[Parameter Tracking]
+    B --> B2[Metric Logging]
+    B --> B3[Artifact Storage]
+    
+    C --> C1[Model Versioning]
+    C --> C2[Model Metadata]
+    C --> C3[Stage Management]
+    
+    D --> D1[Model Serving]
+    D --> D2[Deployment Config]
+    D --> D3[Model Monitoring]
+    
+    style A fill:#bbf,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
     style C fill:#bbf,stroke:#333,stroke-width:2px
+    style D fill:#bbf,stroke:#333,stroke-width:2px
+```
+
+## Detailed Architecture Diagrams
+
+### DVC Workflow Diagram
+```mermaid
+flowchart TD
+    subgraph "DVC Workflow"
+        A[Raw Data] -->|dvc add| B[DVC Cache]
+        B -->|dvc push| C[Remote Storage]
+        D[Pipeline Definition] -->|dvc repro| E[Processed Data]
+        E -->|dvc add| F[DVC Cache]
+        F -->|dvc push| C
+        G[Git] -->|dvc.yaml| D
+        G -->|.dvc/config| H[DVC Config]
+        H -->|remote config| C
+    end
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#f9f,stroke:#333,stroke-width:2px
+    style C fill:#f9f,stroke:#333,stroke-width:2px
+    style D fill:#f9f,stroke:#333,stroke-width:2px
+    style E fill:#f9f,stroke:#333,stroke-width:2px
+    style F fill:#f9f,stroke:#333,stroke-width:2px
+    style G fill:#f9f,stroke:#333,stroke-width:2px
+    style H fill:#f9f,stroke:#333,stroke-width:2px
+```
+
+### MLflow Workflow Diagram
+```mermaid
+flowchart TD
+    subgraph "MLflow Workflow"
+        A[Training Code] -->|mlflow.start_run| B[Experiment Tracking]
+        B -->|log_params| C[Parameters]
+        B -->|log_metrics| D[Metrics]
+        B -->|log_artifacts| E[Artifacts]
+        B -->|log_model| F[Model Registry]
+        F -->|transition| G[Staging]
+        G -->|transition| H[Production]
+        H -->|mlflow.pyfunc| I[Model Serving]
+    end
+    
+    style A fill:#bbf,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#bbf,stroke:#333,stroke-width:2px
+    style D fill:#bbf,stroke:#333,stroke-width:2px
+    style E fill:#bbf,stroke:#333,stroke-width:2px
+    style F fill:#bbf,stroke:#333,stroke-width:2px
+    style G fill:#bbf,stroke:#333,stroke-width:2px
+    style H fill:#bbf,stroke:#333,stroke-width:2px
+    style I fill:#bbf,stroke:#333,stroke-width:2px
 ```
 
 ## Key Differences
@@ -69,6 +129,7 @@ graph TD
 │   └── processed/        # Processed data
 ├── models/               # Model artifacts (tracked by MLflow)
 ├── notebooks/            # Jupyter notebooks
+│   └── workflow.ipynb    # Main workflow notebook
 ├── src/                  # Source code
 │   ├── data_processing/  # Data processing scripts
 │   └── model_training/   # Model training scripts
@@ -82,7 +143,7 @@ graph TD
 1. **Clone the Repository**
 ```bash
 git clone <repository-url>
-cd data-model-tracking
+cd ml-trackhub
 ```
 
 2. **Create and Activate Virtual Environment**
@@ -120,7 +181,7 @@ dvc remote add -d myremote <remote-storage-url>
 mlflow server --host 0.0.0.0 --port 5000
 ```
 
-6. **Run the Demo**
+6. **Run the Project**
 ```bash
 # Generate sample data
 python src/data_processing/generate_data.py
@@ -137,7 +198,7 @@ python src/model_training/train.py
 - MLflow UI: Open http://localhost:5000 in your browser
 - Analysis report: Open `data/processed/analysis_report.html`
 
-## Demo Components Explained
+## Project Components Explained
 
 ### 1. Data Processing (DVC)
 - **Data Generation**: Creates synthetic classification dataset
