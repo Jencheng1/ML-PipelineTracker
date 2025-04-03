@@ -1,0 +1,17 @@
+stages:
+  prepare:
+    cmd: python src/data_processing/prepare.py
+    deps:
+      - src/data_processing/prepare.py
+      - data/raw/sample_data.csv
+    outs:
+      - data/processed/processed_data.csv
+      - data/processed/feature_importance.png
+
+  analyze:
+    cmd: python src/data_processing/analyze.py
+    deps:
+      - src/data_processing/analyze.py
+      - data/processed/processed_data.csv
+    outs:
+      - data/processed/analysis_report.html 
